@@ -124,11 +124,8 @@ function _main() {
           game.stage.aim.visible = false;
           worker.onmessage = function (_ref) {
             var data = _ref.data;
-            var type = data.type,
-              x = data.x,
-              y = data.y;
+            var type = data.type;
             if (type === 'prediction') {
-              console.log("\uD83C\uDFAF AI predicted at: (".concat(x, ", ").concat(y, ")"));
               container.updateHUD(data);
               game.stage.aim.visible = true;
               game.stage.aim.setPosition(data.x, data.y);
@@ -110098,16 +110095,6 @@ var Aim = /*#__PURE__*/function (_Sprite) {
   }
   _inherits(Aim, _Sprite);
   return _createClass(Aim, [{
-    key: "move",
-    value: function move(x, y) {
-      var data = this.normalizePosition(x, y);
-      this.position.set(data.x, data.y);
-
-      // if (!this.visible) {
-      //   this.visible = true;
-      // }
-    }
-  }, {
     key: "setSize",
     value: function setSize(width, height) {
       this.width = width;
@@ -110133,6 +110120,16 @@ var Aim = /*#__PURE__*/function (_Sprite) {
         x: moveToX,
         y: moveToY
       };
+    }
+  }, {
+    key: "move",
+    value: function move(x, y) {
+      var data = this.normalizePosition(x, y);
+      this.position.set(data.x, data.y);
+
+      // if (!this.visible) {
+      //   this.visible = true;
+      // }
     }
   }, {
     key: "reset",

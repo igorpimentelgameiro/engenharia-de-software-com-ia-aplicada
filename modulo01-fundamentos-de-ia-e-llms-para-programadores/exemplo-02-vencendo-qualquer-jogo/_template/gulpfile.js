@@ -1,14 +1,14 @@
-var gulp = require('gulp');
-var connect = require('gulp-connect');
-var audiosprite = require('./vendor/audiosprite');
-var glob = require('glob');
-var shell = require('gulp-shell');
-var fs = require('fs');
+const gulp = require('gulp');
+const connect = require('gulp-connect');
+const audiosprite = require('./vendor/audiosprite');
+const glob = require('glob');
+const shell = require('gulp-shell');
+const fs = require('fs');
 
 gulp.task('audio', gulp.parallel(function(cb) {
-  var files = glob.sync('./src/assets/sounds/*.mp3');
-  var outputPath = './dist/audio';
-  var opts = {
+  const files = glob.sync('./src/assets/sounds/*.mp3');
+  const outputPath = './dist/audio';
+  const opts = {
     output: outputPath,
     path: './',
     format: 'howler2',
@@ -18,7 +18,7 @@ gulp.task('audio', gulp.parallel(function(cb) {
 
   return audiosprite(files, opts, function(err, obj) {
     if (err) {
-      console.error(err);
+      return cb(err);
     }
 
     return fs.writeFile('./dist/audio' + '.json', JSON.stringify(obj, null, 2), cb);
@@ -33,7 +33,13 @@ gulp.task('images', gulp.parallel(function(){
   return gulp.src('*', {read:false})
     .pipe(shell([
       'TexturePacker --version || echo ERROR: TexturePacker not found, install TexturePacker',
-      'TexturePacker --disable-rotation --data dist/sprites.json --format json --sheet dist/sprites.png src/assets/images'
+      [
+        'TexturePacker --disable-rotation',
+        '--data dist/sprites.json',
+        '--format json',
+        '--sheet dist/sprites.png',
+        'src/assets/images'
+      ].join(' ')
     ]))
     .pipe(connect.reload());
 }));
@@ -41,8 +47,8 @@ gulp.task('images', gulp.parallel(function(){
 gulp.task('deploy', gulp.parallel(function() {
   return gulp.src('*', {read:false})
     .pipe(shell([
-    'aws --profile duckhunt s3 sync dist/ s3://duckhuntjs.com --include \'*\' --acl \'public-read\''
-  ]));
+      'aws --profile duckhunt s3 sync dist/ s3://duckhuntjs.com --include \'*\' --acl \'public-read\''
+    ]));
 }));
 
 gulp.task('default', gulp.parallel('images', 'audio'));

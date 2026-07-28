@@ -7,8 +7,6 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 importScripts('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest');
-var MODEL_PATH = "yolov5n_web_model/model.json";
-var LABELS_PATH = "yolov5n_web_model/labels.json";
 self.onmessage = /*#__PURE__*/function () {
   var _ref2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(_ref) {
     var data;
@@ -37,7 +35,6 @@ self.onmessage = /*#__PURE__*/function () {
     return _ref2.apply(this, arguments);
   };
 }();
-console.log('🧠 YOLOv5n Web Worker initialized');
 /******/ })()
 ;
 //# sourceMappingURL=machine-learning_worker_js.js.map

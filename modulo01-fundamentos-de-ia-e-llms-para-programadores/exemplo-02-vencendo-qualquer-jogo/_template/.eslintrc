@@ -3,7 +3,23 @@
     "./eslint/eslint-defaults.json",
     "./eslint/eslint-babel.json"
   ],
-  "env" : {
+  "env": {
     "browser": true
-  }
+  },
+  "overrides": [
+    {
+      "files": ["gulpfile.js", "webpack.config.js"],
+      "env": {
+        "browser": false,
+        "node": true
+      }
+    },
+    {
+      "files": ["machine-learning/worker.js"],
+      "env": {
+        "browser": false,
+        "worker": true
+      }
+    }
+  ]
 }
