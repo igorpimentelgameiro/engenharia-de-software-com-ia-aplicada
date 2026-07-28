@@ -118,9 +118,7 @@ function _main() {
       while (1) switch (_context2.n) {
         case 0:
           container = (0,_layout__WEBPACK_IMPORTED_MODULE_0__.buildLayout)(game.app);
-          worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u("machine-learning_worker_js"), __webpack_require__.b), {
-            type: undefined
-          });
+          worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u("machine-learning_worker_js"), __webpack_require__.b));
           game.stage.aim.visible = false;
           worker.onmessage = function (_ref) {
             var data = _ref.data;
@@ -111126,22 +111124,45 @@ var Game = /*#__PURE__*/function () {
     key: "load",
     value: function () {
       var _load = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+        var spritesheetResponse, spritesheetData, imagePath, imageDirectory, texture, spritesheet;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.n) {
             case 0:
+              if ((0,pixi_js__WEBPACK_IMPORTED_MODULE_0__.isWebGLSupported)()) {
+                _context.n = 1;
+                break;
+              }
+              throw new Error('WebGL is not available in this browser.');
+            case 1:
               this.app = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Application();
-              _context.n = 1;
+              _context.n = 2;
               return this.app.init({
                 width: window.innerWidth,
                 height: window.innerHeight,
-                background: BLUE_SKY_COLOR
+                background: BLUE_SKY_COLOR,
+                preference: 'webgl'
               });
-            case 1:
-              document.body.appendChild(this.app.canvas);
-              _context.n = 2;
-              return pixi_js__WEBPACK_IMPORTED_MODULE_0__.Assets.load(this.spritesheet);
             case 2:
-              this.textures = _context.v.textures;
+              document.body.appendChild(this.app.canvas);
+              _context.n = 3;
+              return fetch(this.spritesheet);
+            case 3:
+              spritesheetResponse = _context.v;
+              _context.n = 4;
+              return spritesheetResponse.json();
+            case 4:
+              spritesheetData = _context.v;
+              imagePath = spritesheetData.meta.image;
+              imageDirectory = this.spritesheet.includes('/') ? this.spritesheet.slice(0, this.spritesheet.lastIndexOf('/') + 1) : '';
+              _context.n = 5;
+              return pixi_js__WEBPACK_IMPORTED_MODULE_0__.Assets.load(imageDirectory + imagePath);
+            case 5:
+              texture = _context.v;
+              spritesheet = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Spritesheet(texture, spritesheetData);
+              _context.n = 6;
+              return spritesheet.parse();
+            case 6:
+              this.textures = spritesheet.textures;
               return _context.a(2, this.onLoad());
           }
         }, _callee, this);
@@ -112470,11 +112491,26 @@ function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 
 
+function showStartupError() {
+  document.body.textContent = '';
+  var message = document.createElement('main');
+  message.style.cssText = ['min-height:100vh', 'display:flex', 'flex-direction:column', 'align-items:center', 'justify-content:center', 'gap:12px', 'padding:24px', 'background:#101820', 'color:#f5f7fa', 'font-family:Arial,sans-serif', 'text-align:center'].join(';');
+  var title = document.createElement('h1');
+  title.textContent = 'WebGL nao esta disponivel';
+  title.style.cssText = 'margin:0;font-size:28px';
+  var description = document.createElement('p');
+  description.textContent = 'Ative a aceleracao grafica do navegador ou teste em outro navegador para rodar o jogo.';
+  description.style.cssText = 'max-width:560px;margin:0;font-size:16px;line-height:1.5';
+  message.appendChild(title);
+  message.appendChild(description);
+  document.body.appendChild(message);
+}
 document.addEventListener('DOMContentLoaded', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-  var game;
+  var game, _t;
   return _regenerator().w(function (_context) {
-    while (1) switch (_context.n) {
+    while (1) switch (_context.p = _context.n) {
       case 0:
+        _context.p = 0;
         game = new _src_modules_Game__WEBPACK_IMPORTED_MODULE_1__["default"]({
           spritesheet: 'sprites.json'
         });
@@ -112484,9 +112520,16 @@ document.addEventListener('DOMContentLoaded', /*#__PURE__*/_asyncToGenerator(/*#
         _context.n = 2;
         return (0,_machine_learning_main__WEBPACK_IMPORTED_MODULE_0__["default"])(game);
       case 2:
+        _context.n = 4;
+        break;
+      case 3:
+        _context.p = 3;
+        _t = _context.v;
+        showStartupError();
+      case 4:
         return _context.a(2);
     }
-  }, _callee);
+  }, _callee, null, [[0, 3]]);
 })), false);
 })();
 

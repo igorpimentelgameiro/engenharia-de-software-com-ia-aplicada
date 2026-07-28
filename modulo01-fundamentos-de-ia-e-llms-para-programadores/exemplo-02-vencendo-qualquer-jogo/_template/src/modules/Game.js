@@ -1,4 +1,4 @@
-import { Application, Assets } from 'pixi.js';
+import { Application, Assets, Spritesheet, isWebGLSupported } from 'pixi.js';
 import { remove as _remove } from 'lodash/array';
 import levels from '../data/levels.json';
 import Stage from './Stage';
@@ -237,15 +237,30 @@ class Game {
   }
 
   async load() {
+    if (!isWebGLSupported()) {
+      throw new Error('WebGL is not available in this browser.');
+    }
+
     this.app = new Application();
     await this.app.init({
       width: window.innerWidth,
       height: window.innerHeight,
       background: BLUE_SKY_COLOR,
+      preference: 'webgl',
     });
     document.body.appendChild(this.app.canvas);
 
-    this.textures = (await Assets.load(this.spritesheet)).textures;
+    const spritesheetResponse = await fetch(this.spritesheet);
+    const spritesheetData = await spritesheetResponse.json();
+    const imagePath = spritesheetData.meta.image;
+    const imageDirectory = this.spritesheet.includes('/')
+      ? this.spritesheet.slice(0, this.spritesheet.lastIndexOf('/') + 1)
+      : '';
+    const texture = await Assets.load(imageDirectory + imagePath);
+    const spritesheet = new Spritesheet(texture, spritesheetData);
+    await spritesheet.parse();
+
+    this.textures = spritesheet.textures;
     return this.onLoad();
   }
 
