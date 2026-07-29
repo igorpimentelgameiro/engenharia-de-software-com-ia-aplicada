@@ -113,17 +113,28 @@ function main(_x) {
 }
 function _main() {
   _main = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(game) {
-    var container, worker;
+    var container, worker, modelReady, predictionRunning;
     return _regenerator().w(function (_context2) {
       while (1) switch (_context2.n) {
         case 0:
           container = (0,_layout__WEBPACK_IMPORTED_MODULE_0__.buildLayout)(game.app);
           worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u("machine-learning_worker_js"), __webpack_require__.b));
+          modelReady = false;
+          predictionRunning = false;
           game.stage.aim.visible = false;
           worker.onmessage = function (_ref) {
             var data = _ref.data;
             var type = data.type;
+            if (type === 'model-loaded') {
+              modelReady = true;
+              return;
+            }
+            if (type === 'prediction-complete' || type === 'prediction-error' || type === 'model-error') {
+              predictionRunning = false;
+              return;
+            }
             if (type === 'prediction') {
+              predictionRunning = false;
               container.updateHUD(data);
               game.stage.aim.visible = true;
               game.stage.aim.setPosition(data.x, data.y);
@@ -134,23 +145,37 @@ function _main() {
             }
           };
           setInterval(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-            var canvas, bitmap;
+            var canvas, bitmap, _t;
             return _regenerator().w(function (_context) {
-              while (1) switch (_context.n) {
+              while (1) switch (_context.p = _context.n) {
                 case 0:
-                  canvas = game.app.renderer.extract.canvas(game.stage);
-                  _context.n = 1;
-                  return createImageBitmap(canvas);
+                  if (!(!modelReady || predictionRunning)) {
+                    _context.n = 1;
+                    break;
+                  }
+                  return _context.a(2);
                 case 1:
+                  predictionRunning = true;
+                  _context.p = 2;
+                  canvas = game.app.renderer.extract.canvas(game.stage);
+                  _context.n = 3;
+                  return createImageBitmap(canvas);
+                case 3:
                   bitmap = _context.v;
                   worker.postMessage({
                     type: 'predict',
                     image: bitmap
                   }, [bitmap]);
-                case 2:
+                  _context.n = 5;
+                  break;
+                case 4:
+                  _context.p = 4;
+                  _t = _context.v;
+                  predictionRunning = false;
+                case 5:
                   return _context.a(2);
               }
-            }, _callee);
+            }, _callee, null, [[2, 4]]);
           })), 200); // every 200ms
           return _context2.a(2, container);
       }

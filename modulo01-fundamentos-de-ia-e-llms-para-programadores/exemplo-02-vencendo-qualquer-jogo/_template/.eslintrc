@@ -19,6 +19,9 @@
       "env": {
         "browser": false,
         "worker": true
+      },
+      "globals": {
+        "tf": "readonly"
       }
     }
   ]
