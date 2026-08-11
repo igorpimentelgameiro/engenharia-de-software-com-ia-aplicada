@@ -3,7 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="origin-trial"
+          content="Aha8arOcVSbcO1Cjx2EzKEuRDeAChym5EZlpN26i4AZzuALsHMb+pboL5Tbj/axn7Dazkj7aG0WdjxQsdf9kSQgAAABUeyJvcmlnaW4iOiJodHRwOi8vMTI3LjAuMC4xOjgwODAiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElQYXJhbXMiLCJleHBpcnkiOjE3OTEyNDQ4MDB9">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
     <title>Web AI Demo</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -15,22 +18,22 @@
         <form id="question-form">
             <div class="parameters">
                 <div class="param-group">
-                    <label for="temperature">Temperature: <span id="temp-value" class="value-display"></span></label>
-                    <input type="range" id="temperature" name="temperature" step="0.1">
-                    <div class="param-description">Controla a criatividade das respostas. Valores baixos = mais focado,
-                        valores altos = mais criativo</div>
-                </div>
-
-                <div class="param-group">
-                    <label for="topK">Top K: <span id="topk-value" class="value-display"></span></label>
-                    <input type="number" id="topK" name="topK">
-                    <div class="param-description">Limita a seleção às K palavras mais prováveis. Valores menores = mais
-                        previsível</div>
+                    <label for="sampling-mode">Modo de amostragem</label>
+                    <select id="sampling-mode" name="samplingMode">
+                        <option value="most-predictable">Muito previsível</option>
+                        <option value="predictable">Previsível</option>
+                        <option value="balanced" selected>Equilibrado</option>
+                        <option value="creative">Criativo</option>
+                        <option value="most-creative">Muito criativo</option>
+                    </select>
+                    <div class="param-description">
+                        No Chrome 151, estes modos substituem os valores numéricos de temperature e topK em páginas web.
+                    </div>
                 </div>
             </div>
 
-            <label for="question">Converse com ela:</label>
-            <textarea name="question" id="question" placeholder="Digite sua pergunta aqui..."></textarea>
+            <label for="question">Converse com a IA (escreva em inglês):</label>
+            <textarea name="question" id="question" placeholder="Exemplo: Why is the sky blue?"></textarea>
 
             <button type="submit" id="ask-button">Enviar</button>
         </form>

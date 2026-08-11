@@ -51,8 +51,7 @@ label {
     font-size: 0.9em;
 }
 
-input[type="number"],
-input[type="range"] {
+select {
     padding: 10px;
     border: 2px solid #404040;
     border-radius: 8px;
@@ -60,69 +59,13 @@ input[type="range"] {
     transition: border-color 0.3s;
     background: #1a1a1a;
     color: #34d399;
+    cursor: pointer;
 }
 
-input[type="number"]:focus,
-input[type="range"]:focus {
+select:focus {
     outline: none;
     border-color: #34d399;
     box-shadow: 0 0 10px rgba(52, 211, 153, 0.4);
-}
-
-input[type="range"] {
-    cursor: pointer;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 8px;
-    background: #404040;
-    border-radius: 4px;
-    padding: 0;
-}
-
-/* Webkit/Chrome/Safari */
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    background: #34d399;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-    transition: transform 0.2s;
-}
-
-input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.1);
-}
-
-/* Firefox */
-input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: #34d399;
-    border-radius: 50%;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-    transition: transform 0.2s;
-}
-
-input[type="range"]::-moz-range-thumb:hover {
-    transform: scale(1.1);
-}
-
-input[type="range"]::-moz-range-track {
-    height: 8px;
-    background: #404040;
-    border-radius: 4px;
-}
-
-.value-display {
-    text-align: center;
-    font-weight: bold;
-    color: #34d399;
-    margin-top: 5px;
 }
 
 .param-description {
