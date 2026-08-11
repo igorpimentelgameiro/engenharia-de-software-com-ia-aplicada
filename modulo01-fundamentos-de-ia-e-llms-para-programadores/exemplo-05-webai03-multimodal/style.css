@@ -32,11 +32,47 @@ h1 {
     text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
 }
 
+.activation-panel {
+    padding: 16px;
+    margin-bottom: 24px;
+    border: 1px solid #6366f1;
+    border-radius: 10px;
+    background: rgba(99, 102, 241, 0.12);
+    color: #e5e7eb;
+    text-align: center;
+}
+
+.activation-panel p {
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.activation-panel[data-state="complete"] {
+    border-color: #34d399;
+    background: rgba(52, 211, 153, 0.12);
+}
+
+.activation-panel[data-state="error"] {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.activation-panel button[hidden] {
+    display: none;
+}
+
 .parameters {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
     margin-bottom: 25px;
+}
+
+.sampling-note {
+    margin-bottom: 25px;
+    color: #9ca3af;
+    font-size: 0.85em;
+    line-height: 1.5;
 }
 
 .param-group {

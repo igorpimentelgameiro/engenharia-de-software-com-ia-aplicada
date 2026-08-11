@@ -12,29 +12,49 @@ import { FormController } from './controllers/formController.js';
     // Set current year
     view.setYear();
 
-    // Check requirements
-    const errors = await aiService.checkRequirements();
-    if (errors) {
-        view.showError(errors);
-        return;
-    }
+    view.setDemoEnabled(false);
 
-    // Initialize translation services
     try {
-        await translationService.initialize();
+        const [aiErrors, translationErrors] = await Promise.all([
+            aiService.checkRequirements(),
+            translationService.checkRequirements(),
+        ]);
+        const errors = [...aiErrors, ...translationErrors];
+
+        if (errors.length > 0) {
+            view.showError(errors);
+            view.showActivationUnavailable();
+            return;
+        }
+
+        view.showActivationReady();
+        view.onActivate(async () => {
+            view.showActivationLoading('Preparando os modelos...');
+
+            try {
+                // Each create() starts directly from this click handler.
+                await Promise.all([
+                    aiService.initialize((message) => view.updateActivationProgress(message)),
+                    translationService.initialize((message) => view.updateActivationProgress(message)),
+                ]);
+
+                const params = await aiService.getParams();
+                view.initializeParameters(params);
+
+                const controller = new FormController(aiService, translationService, view);
+                controller.setupEventListeners();
+
+                view.setDemoEnabled(true);
+                view.showActivationComplete();
+                console.log('Application initialized successfully');
+            } catch (error) {
+                console.error('Error activating Web AI:', error);
+                view.showActivationError(error.message);
+            }
+        });
     } catch (error) {
-        console.error('Error initializing translation:', error);
-        view.showError([error.message]);
-        return;
+        console.error('Error checking Web AI requirements:', error);
+        view.showError([`⚠️ Erro ao verificar as APIs: ${error.message}`]);
+        view.showActivationUnavailable();
     }
-
-    // Get and initialize AI parameters
-    const params = await aiService.getParams();
-    view.initializeParameters(params);
-
-    // Initialize controller and setup event listeners
-    const controller = new FormController(aiService, translationService, view);
-    controller.setupEventListeners();
-
-    console.log('Application initialized successfully');
 })();

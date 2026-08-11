@@ -14,6 +14,11 @@ export class View {
             filePreview: document.getElementById('file-preview'),
             fileUploadBtn: document.getElementById('file-upload-btn'),
             fileSelectedName: document.getElementById('file-selected-name'),
+            activationPanel: document.getElementById('activation-panel'),
+            activationStatus: document.getElementById('activation-status'),
+            activationButton: document.getElementById('activate-button'),
+            parameters: document.getElementById('sampling-parameters'),
+            samplingNote: document.getElementById('sampling-note'),
         };
     }
 
@@ -22,6 +27,14 @@ export class View {
     }
 
     initializeParameters(params) {
+        if (!params) {
+            this.elements.parameters.hidden = true;
+            this.elements.samplingNote.hidden = false;
+            return;
+        }
+
+        this.elements.parameters.hidden = false;
+        this.elements.samplingNote.hidden = true;
         this.elements.topK.max = params.maxTopK;
         this.elements.topK.min = 1;
         this.elements.topK.value = params.defaultTopK;
@@ -68,6 +81,53 @@ export class View {
     showError(errors) {
         this.elements.output.innerHTML = errors.join('<br/>');
         this.elements.button.disabled = true;
+    }
+
+    setDemoEnabled(enabled) {
+        this.elements.form.querySelectorAll('input, textarea, button').forEach((element) => {
+            element.disabled = !enabled;
+        });
+    }
+
+    showActivationReady() {
+        this.elements.activationPanel.dataset.state = 'ready';
+        this.elements.activationStatus.textContent = 'APIs encontradas. Clique para ativar e baixar os modelos necessários.';
+        this.elements.activationButton.textContent = 'Ativar Web AI';
+        this.elements.activationButton.disabled = false;
+    }
+
+    showActivationLoading(message) {
+        this.elements.activationPanel.dataset.state = 'loading';
+        this.elements.activationStatus.textContent = message;
+        this.elements.activationButton.textContent = 'Preparando...';
+        this.elements.activationButton.disabled = true;
+    }
+
+    updateActivationProgress(message) {
+        this.elements.activationStatus.textContent = message;
+    }
+
+    showActivationComplete() {
+        this.elements.activationPanel.dataset.state = 'complete';
+        this.elements.activationStatus.textContent = '✓ Web AI pronta. Faça uma pergunta em inglês.';
+        this.elements.activationButton.hidden = true;
+    }
+
+    showActivationError(message) {
+        this.elements.activationPanel.dataset.state = 'error';
+        this.elements.activationStatus.textContent = message;
+        this.elements.activationButton.textContent = 'Tentar novamente';
+        this.elements.activationButton.disabled = false;
+    }
+
+    showActivationUnavailable() {
+        this.elements.activationPanel.dataset.state = 'error';
+        this.elements.activationStatus.textContent = 'A Web AI não está disponível neste navegador ou dispositivo.';
+        this.elements.activationButton.disabled = true;
+    }
+
+    onActivate(callback) {
+        this.elements.activationButton.addEventListener('click', callback);
     }
 
     setButtonToStopMode() {

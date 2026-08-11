@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web AI Demo</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,8 +13,13 @@
     <div class="container">
         <h1>🤖 Web AI Demo</h1>
 
+        <section id="activation-panel" class="activation-panel" data-state="loading" aria-live="polite">
+            <p id="activation-status">Verificando as APIs do navegador...</p>
+            <button type="button" id="activate-button" disabled>Verificando...</button>
+        </section>
+
         <form id="question-form">
-            <div class="parameters">
+            <div id="sampling-parameters" class="parameters">
                 <div class="param-group">
                     <label for="temperature">Temperature: <span id="temp-value" class="value-display"></span></label>
                     <input type="range" id="temperature" name="temperature" step="0.1">
@@ -28,6 +34,9 @@
                         previsível</div>
                 </div>
             </div>
+            <p id="sampling-note" class="sampling-note" hidden>
+                Temperature e Top K não estão disponíveis neste contexto. O navegador usará os parâmetros padrão.
+            </p>
 
             <div class="file-input-group">
                 <label>📎 Anexar Arquivo (Imagem ou Áudio em inglês):</label>
@@ -42,8 +51,8 @@
                 <div class="file-preview" id="file-preview"></div>
             </div>
 
-            <label for="question">Converse com ela:</label>
-            <textarea name="question" id="question" placeholder="Digite sua pergunta aqui..."></textarea>
+            <label for="question">Converse com ela em inglês:</label>
+            <textarea name="question" id="question" placeholder="Type your question here..."></textarea>
 
             <button type="submit" id="ask-button">Enviar</button>
         </form>
