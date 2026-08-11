@@ -1,4 +1,4 @@
-<output id="output"></output>
+<div id="output"></div>
 <!-- https://www.jsdelivr.com/package/npm/markdown -->
 <script src="https://cdn.jsdelivr.net/npm/markdown@0.5.0/lib/markdown.min.js"></script>
 
@@ -6,42 +6,60 @@
     const output = document.getElementById('output');
 
     ; (async () => {
-        const params = await LanguageModel.params()
-        console.log("Language Model Params:", params);
+        let session;
 
-        const temperature = params.defaultTemperature
-        const topK = params.defaultTopK
-
-        const initialPrompts = [
-            {
-                role: 'system',
-                content: `Você é um assistente de IA que responde de forma clara e objetiva.`
+        try {
+            if (!('LanguageModel' in self)) {
+                throw new Error('A Prompt API não está habilitada neste navegador.');
             }
-        ]
 
-        const question = 'Quem inventou o JavaScript?'
-        output.innerHTML = "Gerando resposta...";
+            const modelOptions = {
+                expectedInputs: [
+                    { type: 'text', languages: ['pt'] }
+                ],
+                expectedOutputs: [
+                    { type: 'text', languages: ['pt'] }
+                ]
+            };
 
-        const session = await LanguageModel.create({
-            expectedInputLanguages: ["pt"],
-            temperature,
-            topK,
-            initialPrompts,
-        })
+            const availability = await LanguageModel.availability(modelOptions);
+            console.log('Language Model Availability:', availability);
 
-        const responseStream = await session.promptStreaming([
-            {
-                role: 'user',
-                content: question
+            if (availability !== 'available') {
+                throw new Error(
+                    `O modelo ainda não está pronto (${availability}). ` +
+                    'O Chrome exige uma interação do usuário para iniciar o primeiro download.'
+                );
             }
-        ])
-        output.innerHTML = ""
-        let fullText = ""
-        for await (const token of responseStream) {
-            fullText += token;
-            output.innerHTML = markdown.toHTML(fullText);
 
-            // console.log(token)
+            output.textContent = 'Gerando resposta...';
+
+            session = await LanguageModel.create({
+                ...modelOptions,
+                initialPrompts: [
+                    {
+                        role: 'system',
+                        content: 'Você é um assistente de IA que responde de forma clara e objetiva.'
+                    }
+                ]
+            });
+
+            const question = 'Quem inventou o JavaScript?';
+            const responseStream = session.promptStreaming(question);
+
+            output.innerHTML = '';
+            let fullText = '';
+
+            for await (const chunk of responseStream) {
+                fullText += chunk;
+                output.innerHTML = markdown.toHTML(fullText);
+                console.log(chunk);
+            }
+        } catch (error) {
+            console.error(error);
+            output.textContent = `Erro: ${error.message}`;
+        } finally {
+            session?.destroy();
         }
     })();
 
